@@ -1,14 +1,15 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { calculatorStore } from "../stores/CalculatorStore";
-import { Box, Button, TextField, IconButton } from "@mui/material";
+import { Box, Button, TextField, IconButton, Grid, Stack } from "@mui/material";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MIN_R, MAX_R } from "../services/calculator";
+import { RotatedPlayIcon } from './RotatedPlayIcon';
 
 export const InputForm: React.FC = observer(() => {
   const s = calculatorStore;
 
-  const [focused, setFocused] = React.useState<'R'|'W'|'V'>('R');
+  const [focused, setFocused] = React.useState<'R'|'W'|'V'|null>('R');
   const rRef = React.useRef<HTMLInputElement>(null);
   const wRef = React.useRef<HTMLInputElement>(null);
   const vRef = React.useRef<HTMLInputElement>(null);
@@ -38,64 +39,73 @@ export const InputForm: React.FC = observer(() => {
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 2 }}>
+      <Grid container spacing={2}>
         {/* R field with arrows */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 1 }}>
-          <IconButton aria-label="less R" color={arrowColor('R')} onClick={() => { focusField('R'); s.decrementR(); }} disableRipple disableTouchRipple disabled={lessRDisabled}>
-            <PlayArrowIcon sx={{ transform: 'rotate(180deg)' }} />
-          </IconButton>
-          <TextField
-            label="Діаметр диска (R, дюйми)"
-            type="number"
-            value={s.R_old}
-            inputRef={rRef}
-            onFocus={() => setFocused('R')}
-            slotProps={{ input: { inputProps: { min: 12, max: 25, step: 1, readOnly: true } } }}
-            fullWidth
-          />
-          <IconButton aria-label="more R" color={arrowColor('R')} onClick={() => { focusField('R'); s.incrementR(); }} disableRipple disableTouchRipple disabled={moreRDisabled}>
-            <PlayArrowIcon />
-          </IconButton>
-        </Box>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <IconButton aria-label="less R" color={arrowColor('R')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('R'); s.decrementR(); }} disableRipple disableTouchRipple disabled={lessRDisabled}>
+              <RotatedPlayIcon />
+            </IconButton>
+            <TextField
+              label="Діаметр диска (R, дюйми)"
+              type="number"
+              value={s.R_old}
+              inputRef={rRef}
+              onFocus={() => setFocused('R')}
+              onBlur={() => setFocused(null)}
+              slotProps={{ input: { inputProps: { min: 12, max: 25, step: 1, readOnly: true } } }}
+              fullWidth
+            />
+            <IconButton aria-label="more R" color={arrowColor('R')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('R'); s.incrementR(); }} disableRipple disableTouchRipple disabled={moreRDisabled}>
+              <PlayArrowIcon />
+            </IconButton>
+          </Stack>
+        </Grid>
 
         {/* W field with arrows */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 1 }}>
-          <IconButton aria-label="less W" color={arrowColor('W')} onClick={() => { focusField('W'); s.decrementW(); }} disableRipple disableTouchRipple disabled={lessWDisabled}>
-            <PlayArrowIcon sx={{ transform: 'rotate(180deg)' }} />
-          </IconButton>
-          <TextField
-            label="Ширина шини (W, мм)"
-            type="number"
-            value={s.W_old}
-            inputRef={wRef}
-            onFocus={() => setFocused('W')}
-            slotProps={{ input: { inputProps: { min: s.currentMinW, max: s.currentMaxW, step: 10, readOnly: true } } }}
-            fullWidth
-          />
-          <IconButton aria-label="more W" color={arrowColor('W')} onClick={() => { focusField('W'); s.incrementW(); }} disableRipple disableTouchRipple disabled={moreWDisabled}>
-            <PlayArrowIcon />
-          </IconButton>
-        </Box>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <IconButton aria-label="less W" color={arrowColor('W')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('W'); s.decrementW(); }} disableRipple disableTouchRipple disabled={lessWDisabled}>
+              <RotatedPlayIcon />
+            </IconButton>
+            <TextField
+              label="Ширина шини (W, мм)"
+              type="number"
+              value={s.W_old}
+              inputRef={wRef}
+              onFocus={() => setFocused('W')}
+              onBlur={() => setFocused(null)}
+              slotProps={{ input: { inputProps: { min: s.currentMinW, max: s.currentMaxW, step: 10, readOnly: true } } }}
+              fullWidth
+            />
+            <IconButton aria-label="more W" color={arrowColor('W')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('W'); s.incrementW(); }} disableRipple disableTouchRipple disabled={moreWDisabled}>
+              <PlayArrowIcon />
+            </IconButton>
+          </Stack>
+        </Grid>
 
         {/* V field with arrows */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 1 }}>
-          <IconButton aria-label="less V" color={arrowColor('V')} onClick={() => { focusField('V'); s.decrementV(); }} disableRipple disableTouchRipple disabled={lessVDisabled}>
-            <PlayArrowIcon sx={{ transform: 'rotate(180deg)' }} />
-          </IconButton>
-          <TextField
-            label="Профіль (V, %)"
-            type="number"
-            value={s.V_old}
-            inputRef={vRef}
-            onFocus={() => setFocused('V')}
-            slotProps={{ input: { inputProps: { min: s.currentMinV, max: s.currentMaxV, step: 5, readOnly: true } } }}
-            fullWidth
-          />
-          <IconButton aria-label="more V" color={arrowColor('V')} onClick={() => { focusField('V'); s.incrementV(); }} disableRipple disableTouchRipple disabled={moreVDisabled}>
-            <PlayArrowIcon />
-          </IconButton>
-        </Box>
-      </Box>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <IconButton aria-label="less V" color={arrowColor('V')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('V'); s.decrementV(); }} disableRipple disableTouchRipple disabled={lessVDisabled}>
+              <RotatedPlayIcon />
+            </IconButton>
+            <TextField
+              label="Профіль (V, %)"
+              type="number"
+              value={s.V_old}
+              inputRef={vRef}
+              onFocus={() => setFocused('V')}
+              onBlur={() => setFocused(null)}
+              slotProps={{ input: { inputProps: { min: s.currentMinV, max: s.currentMaxV, step: 5, readOnly: true } } }}
+              fullWidth
+            />
+            <IconButton aria-label="more V" color={arrowColor('V')} onMouseDown={(e) => e.preventDefault()} onClick={() => { focusField('V'); s.incrementV(); }} disableRipple disableTouchRipple disabled={moreVDisabled}>
+              <PlayArrowIcon />
+            </IconButton>
+          </Stack>
+        </Grid>
+      </Grid>
       <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disableRipple disableTouchRipple>
         Розрахувати нові розміри
       </Button>

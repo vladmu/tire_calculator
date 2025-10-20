@@ -49,7 +49,7 @@ test('ResultsArea renders initial and option cards including alternative', () =>
 
   // Main card
   expect(screen.getByText(main.newSize)).toBeInTheDocument();
-  expect(screen.getByText('Best')).toBeInTheDocument();
+  expect(screen.getByTitle('Найкращий')).toBeInTheDocument();
 
   // Alternative card
   expect(screen.getByText(/НАЙКРАЩА АЛЬТЕРНАТИВА/i)).toBeInTheDocument();

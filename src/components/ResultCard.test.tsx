@@ -19,14 +19,14 @@ const baseResult: SingleProfileResult = {
 test('ResultCard renders main option with best flag', () => {
   renderWithTheme(<ResultCard result={baseResult} isBestInMain baseWidth={205} maxDeltaPercent={2} />);
   expect(screen.getByText(/Варіант W\+10/i)).toBeInTheDocument();
-  expect(screen.getByText('Best')).toBeInTheDocument();
+  expect(screen.getByTitle('Найкращий')).toBeInTheDocument();
   expect(screen.getByText(baseResult.newSize)).toBeInTheDocument();
 });
 
 test('ResultCard renders alternative option with alt flag', () => {
   renderWithTheme(<ResultCard result={baseResult} isAlternative baseWidth={205} maxDeltaPercent={2} />);
   expect(screen.getByText(/НАЙКРАЩА АЛЬТЕРНАТИВА/i)).toBeInTheDocument();
-  expect(screen.getByText('Alt')).toBeInTheDocument();
+  expect(screen.getByTitle('Альтернатива')).toBeInTheDocument();
 });
 
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { calculatorStore } from "../stores/CalculatorStore";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, Grid } from "@mui/material";
 import { MAX_DELTA_PERCENT } from "../services/calculator";
 import { ResultCard } from "./ResultCard";
 
@@ -31,27 +31,29 @@ export const ResultsArea: React.FC = observer(() => {
         <Typography variant="body2"><strong>Профіль (V):</strong> {initV}%</Typography>
       </Paper>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }, gap: 2 }}>
+      <Grid container spacing={2}>
         {resultsMain.map((r: import('../types/types').SingleProfileResult) => (
-          <ResultCard
-            key={r.newSize}
-            result={r}
-            isBestInMain={!!bestMainResult && r.newSize === bestMainResult.newSize}
-            baseWidth={baseWidth}
-            maxDeltaPercent={MAX_DELTA_PERCENT}
-          />
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={r.newSize}>
+            <ResultCard
+              result={r}
+              isBestInMain={!!bestMainResult && r.newSize === bestMainResult.newSize}
+              baseWidth={baseWidth}
+              maxDeltaPercent={MAX_DELTA_PERCENT}
+            />
+          </Grid>
         ))}
 
         {bestAlternativeResult && (
-          <ResultCard
-            key={bestAlternativeResult.newSize}
-            result={bestAlternativeResult}
-            isAlternative
-            baseWidth={baseWidth}
-            maxDeltaPercent={MAX_DELTA_PERCENT}
-          />
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={bestAlternativeResult.newSize}>
+            <ResultCard
+              result={bestAlternativeResult}
+              isAlternative
+              baseWidth={baseWidth}
+              maxDeltaPercent={MAX_DELTA_PERCENT}
+            />
+          </Grid>
         )}
-      </Box>
+      </Grid>
     </Box>
   );
 });

@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Калькулятор шин",
+  "name": "Калькулятор шин і дисків",
   "icons": [
     {
       "src": "favicon.ico",

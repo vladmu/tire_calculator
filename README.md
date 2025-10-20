@@ -59,6 +59,7 @@ MAX_LIMITS = {
 - React 19 + TypeScript (Create React App)
 - MobX 6 + mobx-react-lite
 - Material UI (MUI) v5/7 без кастомної теми (дефолтна)
+- Стилі: MUI styled API (без SCSS)
 - Jest + React Testing Library (100% Statements/Branches/Functions/Lines)
 - ESLint + Prettier
 - GitHub Actions (CI й деплой на GitHub Pages)
