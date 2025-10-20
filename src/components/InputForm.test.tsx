@@ -28,7 +28,6 @@ test('InputForm renders fields with default per-R minimums and submit button', (
 test('arrow buttons update store values and submitting calls calculate', async () => {
   renderWithTheme(<InputForm />);
 
-  const spyCalc = jest.spyOn(calculatorStore, 'calculate').mockImplementation(() => {});
 
   // Increase R from 12 to 17 via right arrow (5 clicks)
   const moreR = screen.getByRole('button', { name: 'more R' });
@@ -54,9 +53,8 @@ test('arrow buttons update store values and submitting calls calculate', async (
   expect(calculatorStore.V_old).toBe('50');
 
   await userEvent.click(screen.getByRole('button', { name: /Розрахувати нові розміри/i }));
-  expect(spyCalc).toHaveBeenCalledTimes(1);
-
-  spyCalc.mockRestore();
+  // Assert that calculation produced results in the store (avoid spying on bound actions)
+  expect(calculatorStore.results).not.toBeNull();
 });
 
 test('inputs have expected numeric attributes (dynamic min/max and steps) and arrow focus coloring', async () => {

@@ -27,11 +27,11 @@ test('renders header title', () => {
 
 // Error path: shows validation error when submitting empty form
 test('shows validation error when submitting empty form', async () => {
-  renderWithProviders();
   // Simulate invalid state programmatically since inputs are read-only
-  calculatorStore.R_old = '';
-  calculatorStore.W_old = '';
-  calculatorStore.V_old = '';
+  calculatorStore.setRRaw('');
+  calculatorStore.setWRaw('');
+  calculatorStore.setVRaw('');
+  renderWithProviders();
   await userEvent.click(screen.getByRole('button', { name: /Розрахувати нові розміри/i }));
   expect(await screen.findByText(/Будь ласка, введіть коректні числові значення\./i)).toBeInTheDocument();
 });

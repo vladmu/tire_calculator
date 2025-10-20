@@ -17,7 +17,7 @@ export class CalculatorStore {
   results: CalculationResults | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get currentR(): number {
@@ -60,6 +60,18 @@ export class CalculatorStore {
 
   setVRaw(val: string) {
     this.V_old = val;
+  }
+
+  setRRaw(val: string) {
+    this.R_old = val;
+  }
+
+  setResults(results: CalculationResults | null) {
+    this.results = results;
+  }
+
+  setErrorMessage(message: string | null) {
+    this.error = { message };
   }
 
   // Commit methods: normalize to step and clamp within dynamic limits

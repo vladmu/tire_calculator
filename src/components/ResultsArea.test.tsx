@@ -33,13 +33,13 @@ test('ResultsArea renders initial and option cards including alternative', () =>
   const main = makeResult(215, 18, 45, base);
   const alt = makeResult(195, 19, 40, base);
 
-  calculatorStore.results = {
+  calculatorStore.setResults({
     initialSizeKey: `${base.W}/${base.V} R${base.R}`,
     D_total_old,
     resultsMain: [main],
     bestMainResult: main,
     bestAlternativeResult: alt
-  };
+  });
 
   renderWithTheme(<ResultsArea />);
 
@@ -71,13 +71,13 @@ test('ResultsArea renders without alternative card when none provided', () => {
     V_needed_float: 45
   };
 
-  calculatorStore.results = {
+  calculatorStore.setResults({
     initialSizeKey: `${base.W}/${base.V} R${base.R}`,
     D_total_old,
     resultsMain: [main],
     bestMainResult: main,
     bestAlternativeResult: null
-  };
+  });
 
   renderWithTheme(<ResultsArea />);
 

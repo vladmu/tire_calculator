@@ -99,8 +99,8 @@ describe('CalculatorStore extras', () => {
   test('reset restores per-R minimum defaults and clears error/results', () => {
     const s = new CalculatorStore();
     s.setR('17'); s.setW('205'); s.setV('50');
-    s.error.message = 'err';
-    s.results = {} as any;
+    s.setErrorMessage('err');
+    s.setResults({} as any);
     s.reset();
     expect(s.R_old).toBe('12');
     expect(s.W_old).toBe('135');
