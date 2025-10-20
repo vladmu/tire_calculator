@@ -84,3 +84,40 @@ test('ResultsArea renders without alternative card when none provided', () => {
   expect(screen.getByText('Поточний розмір')).toBeInTheDocument();
   expect(screen.queryByText(/АБСОЛЮТНО НАЙКРАЩА АЛЬТЕРНАТИВА/i)).not.toBeInTheDocument();
 });
+
+
+test('ResultsArea renders nothing when store has no results', () => {
+  calculatorStore.reset();
+  calculatorStore.setResults(null);
+  const { container } = renderWithTheme(<ResultsArea />);
+  expect(container).toBeEmptyDOMElement();
+});
+
+
+test('ResultsArea handles initialSizeKey without R segment (rPart falsy branch)', () => {
+  // Base values for D_old calculation
+  const base = { R: 17, W: 205, V: 50 };
+  const D_total_old = calculateTotalDiameter(base.R, base.W, base.V);
+  const main: SingleProfileResult = {
+    W_new: 215, R_new: 18, V_new: 45,
+    D_total_new: calculateTotalDiameter(18, 215, 45),
+    delta: calculateTotalDiameter(18, 215, 45) - D_total_old,
+    delta_percent: ((calculateTotalDiameter(18, 215, 45) - D_total_old) / D_total_old) * 100,
+    newSize: '215/45 R18',
+    V_needed_float: 45
+  };
+
+  // Intentionally omit " R.." in the key
+  calculatorStore.setResults({
+    initialSizeKey: `${base.W}/${base.V}`,
+    D_total_old,
+    resultsMain: [main],
+    bestMainResult: main,
+    bestAlternativeResult: null
+  });
+
+  renderWithTheme(<ResultsArea />);
+  // Should still render without crashing and show initial block and main card
+  expect(screen.getByText('Поточний розмір')).toBeInTheDocument();
+  expect(screen.getByText(main.newSize)).toBeInTheDocument();
+});

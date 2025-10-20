@@ -204,3 +204,85 @@ describe('CalculatorStore setR resets W/V to per-R minimums on change', () => {
     expect(s.V_old).toBe(String(minV12)); // 60
   });
 });
+
+
+
+describe('CalculatorStore additional branch coverage', () => {
+  test('setR handles non-numeric string and clamps below/above bounds', () => {
+    const s = new CalculatorStore();
+    // Change W/V to custom values first, to ensure non-numeric R does not reset them
+    s.setR('13');
+    s.setW('155');
+    s.setV('55');
+
+    // Non-numeric: R_old should become raw string and W/V remain unchanged
+    s.setR('abc');
+    expect(s.R_old).toBe('abc');
+    expect(s.W_old).toBe('150');
+    expect(s.V_old).toBe('55');
+
+    // Below MIN_R clamps to 12 and resets W/V to per-R minimums
+    s.setR('1');
+    expect(s.R_old).toBe(String(calc.MIN_R));
+    expect(s.W_old).toBe(String(calc.MIN_LIMITS[calc.MIN_R][0]));
+    expect(s.V_old).toBe(String(Math.max(calc.MIN_PROFILE_GLOBAL, calc.MIN_LIMITS[calc.MIN_R][1])));
+
+    // Above MAX_R clamps to MAX_R and resets W/V
+    s.setR('999');
+    expect(s.R_old).toBe(String(calc.MAX_R));
+    expect(s.W_old).toBe(String(calc.MIN_LIMITS[calc.MAX_R][0]));
+    expect(s.V_old).toBe(String(Math.max(calc.MIN_PROFILE_GLOBAL, calc.MIN_LIMITS[calc.MAX_R][1])));
+  });
+
+  test('increment/decrement W/V use min values as base when raw inputs are non-numeric', () => {
+    const s = new CalculatorStore();
+    s.setR('17');
+
+    // Non-numeric W -> increment uses currentMinW as base (185 -> 195)
+    s.setWRaw('');
+    s.incrementW();
+    expect(s.W_old).toBe(String(calc.MIN_LIMITS[17][0] + 10));
+
+    // Non-numeric again, decrement goes to min (base 185 - 10 clamped to 185)
+    s.setWRaw('');
+    s.decrementW();
+    expect(s.W_old).toBe(String(calc.MIN_LIMITS[17][0]));
+
+    // Non-numeric V -> increment uses currentMinV as base (35 -> 40)
+    s.setVRaw('');
+    s.incrementV();
+    const minV = Math.max(calc.MIN_PROFILE_GLOBAL, calc.MIN_LIMITS[17][1]);
+    expect(s.V_old).toBe(String(minV + 5));
+
+    // Non-numeric again, decrement clamps to min (35)
+    s.setVRaw('');
+    s.decrementV();
+    expect(s.V_old).toBe(String(minV));
+  });
+
+  test('calculate sets validation error when inputs are invalid', () => {
+    const s = new CalculatorStore();
+    // Make inputs invalid (empty)
+    s.setRRaw(''); s.setWRaw(''); s.setVRaw('');
+    s.calculate();
+    expect(s.error.message).toBe('Будь ласка, введіть коректні числові значення.');
+    expect(s.results).toBeNull();
+  });
+});
+
+
+
+describe('CalculatorStore commit clamps below minimum for numeric inputs', () => {
+  test('commitW/commitV clamp up to current minimum when given small numeric', () => {
+    const s = new CalculatorStore();
+    s.setR('17');
+    s.setWRaw('1');
+    s.commitW();
+    expect(s.W_old).toBe(String(calc.MIN_LIMITS[17][0]));
+
+    s.setVRaw('1');
+    s.commitV();
+    const minV = Math.max(calc.MIN_PROFILE_GLOBAL, calc.MIN_LIMITS[17][1]);
+    expect(s.V_old).toBe(String(minV));
+  });
+});

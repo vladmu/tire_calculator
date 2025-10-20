@@ -52,6 +52,16 @@ test('arrow buttons update store values and submitting calls calculate', async (
   await userEvent.click(moreV);
   expect(calculatorStore.V_old).toBe('50');
 
+  // Now lessR and lessW are enabled — click them to cover handlers
+  const lessR = screen.getByRole('button', { name: 'less R' });
+  const lessW = screen.getByRole('button', { name: 'less W' });
+  // Click less W first while R=17 so it's enabled: 205 -> 195
+  await userEvent.click(lessW);
+  expect(calculatorStore.W_old).toBe('195');
+  // Then click less R: 17 -> 16 (this will also reset W/V to R=16 mins internally)
+  await userEvent.click(lessR);
+  expect(calculatorStore.R_old).toBe('16');
+
   await userEvent.click(screen.getByRole('button', { name: /Розрахувати нові розміри/i }));
   // Assert that calculation produced results in the store (avoid spying on bound actions)
   expect(calculatorStore.results).not.toBeNull();
