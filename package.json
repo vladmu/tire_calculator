@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -11,6 +15,8 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "mobx": "^6.15.0",
+    "mobx-react-lite": "^4.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-scripts": "5.0.1",
@@ -20,7 +26,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage --watchAll=false",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -28,6 +35,29 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+      "collectCoverageFrom": [
+        "src/**/*.{ts,tsx}",
+        "!src/**/*.d.ts",
+        "!src/**/__tests__/**",
+        "!src/types/**"
+      ],
+      "coverageThreshold": {
+        "global": {
+          "branches": 90,
+          "functions": 95,
+          "lines": 97,
+          "statements": 97
+        }
+      }
+    },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-testing-library": "^6.4.2",
+    "eslint-plugin-jest-dom": "^5.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0"
   },
   "browserslist": {
     "production": [

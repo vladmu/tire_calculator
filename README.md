@@ -1,46 +1,128 @@
-# Getting Started with Create React App
+# 🚗 Калькулятор підбору шин і дисків
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Сучасний React + TypeScript застосунок з MobX для керування станом та Material UI для інтерфейсу. Реалізує логіку з вихідного HTML/JS: пошук максимально можливого діаметра диска з мінімальною дельтою, дотримання лімітів для R/W/V, відбір основних і альтернативних варіантів.
 
-## Available Scripts
+## Стек
+- React 19 + TypeScript (CRA)
+- MobX + mobx-react-lite
+- Material UI (MUI)
 
-In the project directory, you can run:
+## Структура
+```
+src/
+  components/
+    Header.tsx
+    InfoBlock.tsx
+    InputForm.tsx
+    ResultCard.tsx
+    ResultsArea.tsx
+  services/
+    calculator.ts          // Вся бізнес-логіка та константи
+  stores/
+    CalculatorStore.ts     // MobX-стан і дії
+  themes/
+    theme.ts               // Тема MUI
+  types/
+    types.ts               // Типи для результатів/вхідних даних
+  App.tsx                  // Каркас застосунку
+  index.tsx                // Точка входу (без ThemeProvider, використовується дефолтна тема MUI)
+```
 
-### `npm start`
+## Запуск
+- Встановити залежності (якщо потрібно):
+  npm install
+- Режим розробки:
+  npm start
+- Продакшн-збірка:
+  npm run build
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Використання
+1. Введіть вихідні параметри: R (ціле число), W (кратне 5), V (кратне 5, не менше 20).
+2. Натисніть "Розрахувати нові розміри".
+3. Побачите:
+   - Картку поточного розміру (діаметр у мм).
+   - Варіанти для W, W+10, W+20 (картки). Найкращий у межах основних варіантів виділено зеленим.
+   - Якщо існує кращий варіант поза основним діапазоном (крок 10 мм), показується окрема картка (жовта).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Обмеження: дельта діаметра не більше ±2%, профіль ≥ 20% з кроком 5%. Застосовуються мінімальні/максимальні ліміти для кожного R (див. блок з таблицею в UI).
 
-### `npm test`
+## Примітки по реалізації
+- Алгоритм перенесено у services/calculator.ts як чисті функції з покриттям всіх умов вихідного коду.
+- Пріоритезація: спершу більший R, далі мінімальна |дельта|.
+- Інтерфейс адаптивний: MUI + CSS Grid (без залежності від версії Grid2).
+- Стан і валідації — у MobX-сторі (stores/CalculatorStore.ts).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Ліцензії/завваження
+Цей проєкт базується на Create React App. Деталі деплою: https://cra.link/deployment
 
-### `npm run build`
+## Деплой на GitHub Pages (через GitHub Actions)
+Проєкт готовий до завантаження у приватний репозиторій GitHub та автоматичного розгортання на GitHub Pages за допомогою пайплайнів.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Що вже налаштовано:
+- .github/workflows/ci.yml — CI: встановлення залежностей, тести з покриттям, продакшн-збірка, артефакт з coverage.
+- .github/workflows/deploy.yml — build + deploy на GitHub Pages через офіційний actions/deploy-pages.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Кроки для запуску у вашому репозиторії:
+1) Створіть приватний репозиторій на GitHub та запуште код (гілка main).
+2) У репозиторії відкрийте Settings → Pages:
+   - У секції “Build and deployment” оберіть Source: “GitHub Actions”.
+3) Опційно (якщо у вас SPA з роутингом): ми вже копіюємо index.html у 404.html під час CI, щоб працювали прямі переходи.
+4) Зробіть push у main або запустіть воркфлоу Deploy вручну (Actions → Deploy to GitHub Pages → Run workflow).
+5) Після успішного деплою посилання на сайт зʼявиться у Settings → Pages (або у вихідних даних джоба Deploy у Actions).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Примітки:
+- Для проектних сторінок (https://<user>.github.io/<repo>/) у CRA зазвичай задають поле "homepage" у package.json. Для деплою через GitHub Actions це не обовʼязково, бо воркфлоу публікує в корінь Pages середовища. Якщо ви використовуєте роутер з basename, встановіть його відповідно.
+- Приватні репозиторії: GitHub Pages може бути доступним публічно; контроль видимості залежить від типу акаунта/плану. Перевірте можливості вашої організації/акаунта.
+- Воркфлоу deploy.yml також запускає тести перед збиранням — деплой відбудеться лише якщо тестування успішне.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Як запушити код на GitHub (виправлення «Invalid username or token. Password authentication is not supported for Git operations»)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+GitHub більше не приймає паролі для Git‑операцій. Використовуйте один із двох способів:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Варіант A (рекомендовано): GitHub CLI (gh)
+1. Встановіть GitHub CLI: https://cli.github.com/
+2. У корені проекту виконайте:
+   - gh auth login
+   - Оберіть: GitHub.com → HTTPS → Login with a web browser → підтвердьте у браузері.
+3. Створіть (або привʼяжіть) репозиторій і запуште:
+   - Створити новий приватний репозиторій і одразу запушити:  
+     gh repo create <owner>/<repo> --private --source . --remote origin --push
+   - Або привʼязати існуючий:  
+     git remote add origin https://github.com/<owner>/<repo>.git  
+     git branch -M main  
+     git push -u origin main
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Варіант B: Персональний токен доступу (PAT)
+1. Створіть PAT: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token.
+   - Поставте scope: repo. Увімкнено 2FA? PAT обовʼязковий.
+2. Налаштуйте збереження облікових даних (рекомендовано):
+   - macOS: git config --global credential.helper osxkeychain
+   - Windows: git config --global credential.helper manager-core
+   - Linux: git config --global credential.helper libsecret (або cache)
+3. Перевірте/додайте віддалений репозиторій і виконайте push:
+   - git remote add origin https://github.com/<owner>/<repo>.git  (або git remote set-url origin ...)
+   - git branch -M main
+   - git push -u origin main
+   - Коли запитає «Username»: введіть ваш GitHub логін; «Password»: вставте PAT.
 
-## Learn More
+### Базова конфігурація Git (за потреби)
+- git config --global user.name "Ваше імʼя"
+- git config --global user.email "you@example.com"
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Поширені помилки та як їх усунути
+- Invalid username or token:
+  - Перегенеруйте PAT зі scope repo, переконайтесь що вставляєте саме токен як «пароль».
+  - Якщо ви в організації з SSO — авторизуйте токен для цієї організації (Profile → Settings → Organizations).
+- 2FA увімкнено:
+  - Пароль не працюватиме. Використовуйте PAT або gh auth login.
+- Кешовані некоректні облікові дані:
+  - macOS Keychain: відкрийте Keychain Access → знайдіть github.com → видаліть записи для git.
+  - Або в терміналі: git credential reject; також можна скинути helper: git config --global --unset-all credential.helper
+- 403/Request forbidden by administrative rules:
+  - Перевірте політики організації, SSO‑авторизацію токена та віддалений URL (HTTPS vs SSH).
+- SSH замість HTTPS:
+  - Налаштуйте SSH ключі (ssh-keygen; додайте публічний ключ у GitHub) і використовуйте URL виду git@github.com:owner/repo.git.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Після успішного push, GitHub Actions автоматично запустить CI та деплой на Pages (якщо увімкнено в Settings → Pages → GitHub Actions).
